@@ -374,26 +374,36 @@
         const fileInput = document.getElementById('fileInput');
         const welcomeModal = document.getElementById('welcomeModal');
 
-        const TELEGRAM_URLS = ["https://t.me/musli_ma02",
-"https://t.me/Bonushka24",
-"https://t.me/Lol4107",
-"https://t.me/Sabbit_qolbi",
-"https://t.me/GBU2025yil",
-"https://t.me/Robbim1",
-"https://t.me/zuza1011",
-"https://t.me/Mundirji",
-"https://t.me/laylo013",
-"https://t.me/Z60040",
-"https://t.me/Lave0000",
-"https://t.me/mss_snk",
-"https://t.me/eshonqulova_1995",
-"https://t.me/Rb_n0707",
-"https://t.me/rstmvna02",
-"https://t.me/mubina0211",
-"https://t.me/Hasbunalloh1907",
-"https://t.me/Milllayaaa",
-"https://t.me/Mira_Xanim",
-"https://t.me/Irodakhoon"];
+        const TELEGRAM_URLS = ["https://t.me/Sunshine_0224",
+"https://t.me/Inshaolloh8888888",
+"https://t.me/Fazo9501",
+"https://t.me/Dilosh2992",
+"https://t.me/ABBMNB111",
+"https://t.me/ismoyil95y",
+"https://t.me/Qaysar7778",
+"https://t.me/MNBasall",
+"https://t.me/mlkm100",
+"https://t.me/Lifelongdestination",
+"https://t.me/Talabaaaaaaaaaaaaaaaa",
+"https://t.me/tmmadin",
+"https://t.me/Zilola96_96",
+"https://t.me/aklonnn",
+"https://t.me/BKAUZ",
+"https://t.me/Qaysar7778",
+"https://t.me/deo_0102",
+"https://t.me/Dilbarim_28",
+"https://t.me/Uzoqroo_Yur",
+"https://t.me/sevinchka96",
+"https://t.me/LYOMM444555666777888999",
+"https://t.me/Dildoram_86",
+"https://t.me/allohim_ozinga_shukurrr",
+"https://t.me/Baxtimsiz777",
+"https://t.me/Fjbgcn",
+"https://t.me/UJamilah",
+"https://t.me/dlmmm02",
+"https://t.me/oklfo",
+"https://t.me/Llll88r",
+"https://t.me/hook2928"];
         const BUSY_MESSAGES = [
             "Кичрасиз бу киз хозирда банд экан узур 2 ёки 3 дакикадан сунг ёзмнг манга",
             "Кичрасиз топа олмадим",
@@ -550,4 +560,3 @@
         });
     </script>
 </body>
-
