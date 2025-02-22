@@ -279,6 +279,40 @@
         .telegram-button {
             background: #0088cc;
         }
+
+        /* New styles for search animation */
+        .search-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .search-content {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 1rem;
+            text-align: center;
+        }
+
+        /* New styles for busy modal */
+        .busy-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 2000;
+        }
     </style>
 </head>
 <body>
@@ -361,9 +395,29 @@
             </div>
             <div class="welcome-buttons">
                 <button class="welcome-button" onclick="closeWelcomeModal()">Tushundim, boshlaylik!</button>
-                <button class="welcome-button telegram-button" onclick="window.open('https://t.me/Munis_Admin4', '_blank')">TELEGRAM KANAL</button>
+                <button class="welcome-button telegram-button" onclick="window.open('https://t.me/Hey_jonim', '_blank')">TELEGRAM KANAL</button>
             </div>
         </div>
+    </div>
+
+    <div id="searchAnimation" class="search-animation" style="display: none;">
+        <div class="search-content">
+            <div class="cube-container">
+                <div class="cube">
+                    <div class="front"></div>
+                    <div class="back"></div>
+                    <div class="right"></div>
+                    <div class="left"></div>
+                    <div class="top"></div>
+                    <div class="bottom"></div>
+                </div>
+            </div>
+            <p>Qidirilmoqda...</p>
+        </div>
+    </div>
+
+    <div id="busyModal" class="busy-modal" style="display: none;">
+        <p>Kechrasiz ❌️ Siz qidirgan Kelin nomzod xozirda band biroz vaxtdan so'ng qayta o'rinib ko'ring</p>
     </div>
 
     <script>
@@ -373,37 +427,192 @@
         const messageButton = document.getElementById('messageButton');
         const fileInput = document.getElementById('fileInput');
         const welcomeModal = document.getElementById('welcomeModal');
+        const searchAnimation = document.getElementById('searchAnimation');
+        const busyModal = document.getElementById('busyModal');
 
-        const TELEGRAM_URLS = ["https://t.me/Sunshine_0224",
-"https://t.me/Inshaolloh8888888",
-"https://t.me/Fazo9501",
-"https://t.me/Dilosh2992",
-"https://t.me/ABBMNB111",
-"https://t.me/ismoyil95y",
-"https://t.me/Qaysar7778",
-"https://t.me/MNBasall",
-"https://t.me/mlkm100",
-"https://t.me/Lifelongdestination",
-"https://t.me/Talabaaaaaaaaaaaaaaaa",
-"https://t.me/tmmadin",
-"https://t.me/Zilola96_96",
-"https://t.me/aklonnn",
-"https://t.me/BKAUZ",
-"https://t.me/Qaysar7778",
+        const TELEGRAM_URLS = [
+            "https://t.me/Sunshine_0224",
+            "https://t.me/Inshaolloh8888888",
+            "https://t.me/Fazo9501",
+            "https://t.me/Dilosh2992",
+            "https://t.me/ABBMNB111",
+            "https://t.me/ismoyil95y",
+            "https://t.me/Qaysar7778",
+            "https://t.me/MNBasall",
+            "https://t.me/no_na_me1885",
+"https://t.me/zara_dior80",
+"https://t.me/kz_kz999",
+"https://t.me/SSSSFFFFGGGGGJ",
+"https://t.me/asiya7777",
+"https://t.me/yasin00193",
+"https://t.me/Rainbow95959",
+"https://t.me/LilithEva9",
+"https://t.me/Leylam1999",
+"https://t.me/Shaxzoda7727",
+"https://t.me/Ruxwon03",
+"https://t.me/WW88SSSS88",
+"https://t.me/Baxtim_5447",
+"https://t.me/jenuary1",
+"https://t.me/Mybbbbb0988",
+"https://t.me/tavhid_ll",
+"https://t.me/semuliotion",
+"https://t.me/Muhammadali_0000",
+"https://t.me/Jannat_shaydosim",
+"https://t.me/no_na_me1885",
+"https://t.me/Azizaaammm",
+"https://t.me/Bonu0999",
+"https://t.me/Tashxislaa",
+"https://t.me/Umidimsundirma4488",
+"https://t.me/Go_fitnesss",
+"https://t.me/Ledydi90",
+"https://t.me/gulnozaxon5",
+"https://t.me/Alhamdulillah_3204",
+"https://t.me/Hadicha82",
+"https://t.me/Zara_0311",
+"https://t.me/laylo013",
+"https://t.me/thegrayswan",
+"https://t.me/Bibi_09900",
+"https://t.me/Sevara1525",
+"https://t.me/sadiii_11",
+"https://t.me/Taqdir_hazili_0",
+"https://t.me/Htagfks",
+"https://t.me/Lregj",
+"https://t.me/Navruza_1999",
+"https://t.me/Seraphine1616",
 "https://t.me/deo_0102",
-"https://t.me/Dilbarim_28",
-"https://t.me/Uzoqroo_Yur",
-"https://t.me/sevinchka96",
-"https://t.me/LYOMM444555666777888999",
-"https://t.me/Dildoram_86",
-"https://t.me/allohim_ozinga_shukurrr",
-"https://t.me/Baxtimsiz777",
-"https://t.me/Fjbgcn",
-"https://t.me/UJamilah",
-"https://t.me/dlmmm02",
-"https://t.me/oklfo",
-"https://t.me/Llll88r",
-"https://t.me/hook2928",
+"https://t.me/muhsin_muhsinn",
+"https://t.me/deryacha",
+"https://t.me/GUZALLA7777",
+"https://t.me/dilozorrrrrrr",
+"https://t.me/Maryam300110",
+"https://t.me/olloh_buyuk57",
+"https://t.me/Donbogimmm",
+"https://t.me/thesun011",
+"https://t.me/pnosma19",
+"https://t.me/kuz0200",
+"https://t.me/amorfati050222",
+"https://t.me/zooloshka",
+"https://t.me/oglimga_otakerak",
+"https://t.me/Navruza_1999",
+"https://t.me/soxta1247",
+"https://t.me/Fhjlohh",
+"https://t.me/Yuivfn",
+"https://t.me/Deee2224",
+"https://t.me/soxta1247",
+"https://t.me/shaxlor",
+"https://t.me/z5677777",
+"https://t.me/MKAI2010",
+"https://t.me/hanafiy_aa",
+"https://t.me/Baxttilayman",
+"https://t.me/tehlikali",
+"https://t.me/Mi_mi211",
+"https://t.me/Muhammadalieva_001",
+"https://t.me/BEAR5050",
+"https://t.me/Tyulpancha",
+"https://t.me/Bizbaxtlib",
+"https://t.me/Sabrlig1m_1",
+"https://t.me/Beautydollyy",
+"https://t.me/Onajonimquyoshim",
+"https://t.me/zara_dior80",
+"https://t.me/kz_kz999",
+"https://t.me/asiya7777",
+"https://t.me/Rainbow95959",
+"https://t.me/LilithEva9",
+"https://t.me/Leylam1999",
+"https://t.me/Sevara1525",
+"https://t.me/Maftu89",
+"https://t.me/hghgy6576yt",
+"https://t.me/Baxtli836",
+"https://t.me/assi1984",
+"https://t.me/Jojo_96",
+"https://t.me/maxliyo0606",
+"https://t.me/Sferaaz",
+"https://t.me/BAXORAXON555",
+"https://t.me/i9irij",
+"https://t.me/RobbimAllohdurr",
+"https://t.me/Pro_09_08",
+"https://t.me/Life_is_short0407",
+"https://t.me/island77f",
+"https://t.me/Hayot_sinov90",
+"https://t.me/MITTIVOYIM999",
+"https://t.me/nilu95hjjj",
+"https://t.me/bornpink_girl",
+"https://t.me/Allohbuyukdur78",
+"https://t.me/aaaaa_1228",
+"https://t.me/dmin_ruu",
+"https://t.me/Gulqiz0",
+"https://t.me/A1shem_23",
+"https://t.me/MITTIVOYIM999",
+"https://t.me/dilim4444",
+"https://t.me/xayotshunaqa1994",
+"https://t.me/island77f",
+"https://t.me/Jojo_96",
+"https://t.me/Seeevdaaaaaa",
+"https://t.me/Mmmmhhukkk",
+"https://t.me/dilim4444",
+"https://t.me/nilu95hjjj",
+"https://t.me/agfagfagf",
+"https://t.me/Fargona1987m",
+"https://t.me/nurnoma29",
+"https://t.me/hghg6yt56yt54r",
+"https://t.me/hghg6y743e",
+"https://t.me/Allohu_Akbar_77",
+"https://t.me/hghvcy654rd",
+"https://t.me/Zexra9404",
+"https://t.me/maybetrueor",
+"https://t.me/hghgy676ytby76",
+"https://t.me/Bahtliimanda",
+"https://t.me/ug_0304",
+"https://t.me/hghgh676yt65",
+"https://t.me/hghg65yt56yt",
+"https://t.me/Asmo088",
+"https://t.me/ARSLONOVA1212",
+"https://t.me/alora_0931",
+"https://t.me/Chiroyli_qizcha_1",
+"https://t.me/Ayub122134",
+"https://t.me/Omadbaxtl",
+"https://t.me/Zebo_34",
+"https://t.me/Shohista8886",
+"https://t.me/nilu95hjjj",
+"https://t.me/hjhgg67uyg",
+"https://t.me/Djajdjk",
+"https://t.me/maxliyo0606",
+"https://t.me/hghfg656yt65",
+"https://t.me/Allohimgaa_shukrlar",
+"https://t.me/hgdfff5554rr",
+"https://t.me/Rayyona57",
+"https://t.me/Orzu0690",
+"https://t.me/jayrona1718",
+"https://t.me/a123921",
+"https://t.me/k_m_8901",
+"https://t.me/xayotshunaqa1994",
+"https://t.me/missledi24",
+"https://t.me/Wwwwwwww1209",
+"https://t.me/Shodlik_3011",
+"https://t.me/Leylam1999",
+"https://t.me/Ruqiyahon0011",
+"https://t.me/Beautydollyy",
+"https://t.me/TRRT01",
+"https://t.me/laylo013",
+"https://t.me/Dur_do_naaa",
+"https://t.me/Dilkhon06",
+"https://t.me/nigow_14",
+"https://t.me/qwerty29090",
+"https://t.me/Tanho_gul_97",
+"https://t.me/Sakinaxon_38",
+"https://t.me/Taqdir_hazili_0",
+"https://t.me/Zarnigor1m",
+"https://t.me/bluebird026",
+"https://t.me/Fza_08",
+"https://t.me/AroshEva",
+"https://t.me/Ladymiss55",
+"https://t.me/Baxtiyorovna_001",
+"https://t.me/Hali_19_91",
+"https://t.me/a182518",
+"https://t.me/Alvodoooo",
+"https://t.me/miss_9803",
+"https://t.me/liriwa_01",
+"https://t.me/alfraganiyus",
 "https://t.me/Dtfgujb",
 "https://t.me/rfugfx",
 "https://t.me/luna_a_a",
@@ -927,7 +1136,8 @@
 "https://t.me/Zilol_076",
 "https://t.me/DILYA_56_56",
 "https://t.me/Izora_2004",
-"https://t.me/Lifeisstillahead1"];
+"https://t.me/Lifeisstillahead1"
+        ];
         const BUSY_MESSAGES = [
             "Кичрасиз бу киз хозирда банд экан узур 2 ёки 3 дакикадан сунг ёзмнг манга",
             "Кичрасиз топа олмадим",
@@ -936,64 +1146,52 @@
         const TEXT_RESPONSE_MESSAGES = [
             "🤖 Узур, мен сиз ёзган матнга тушунмадим. Менга матн ўқиш имкониятини беришмаган, шу учун ёзган матнингизни кўрмадим. 📝❌",
             "🙏 Кечирасиз, мен сиз ёзган матнни ўқишга ҳаракат қилдим, аммо тушунмадим. Менга фақат Келинликка номзоднинг расми ёки элондан нусхасини жўнатинг. 👰🏻‍♀️🔍",
-            "🚫 Менга хабар ёзиш чекланган. Сизга ёрдам беришим учун расм ёки номзоднинг манзил��дан нусха олиб жўнатинг. 🖼️🔗",
+            "🚫 Менга хабар ёзиш чекланган. Сизга ёрдам беришим учун расм ёки номзоднинг манзилидан нусха олиб жўнатинг. 🖼️🔗",
         ];
 
-        let lastVisitTime = localStorage.getItem('lastVisitTime') || 0;
-        let currentUrl = '';
-
         function saveLastVisitTime() {
-            localStorage.setItem('lastVisitTime', Date.now());
+            localStorage.setItem('lastVisitTime', Date.now().toString());
+        }
+
+        function getLastVisitTime() {
+            return parseInt(localStorage.getItem('lastVisitTime') || '0');
         }
 
         function checkReturnTime() {
             const currentTime = Date.now();
+            const lastVisitTime = getLastVisitTime();
             const timeDiff = currentTime - lastVisitTime;
-            return timeDiff >= 15000 && timeDiff <= 120000;
+            return timeDiff >= 5000 && timeDiff <= 15000;
         }
 
-        function showQuickReturnModal() {
-            const quickReturnModal = document.createElement('div');
-            quickReturnModal.className = 'modal';
-            quickReturnModal.innerHTML = `
-                <div class="modal-content">
-                    <div class="cube-container">
-                        <div class="cube">
-                            <div class="front"></div>
-                            <div class="back"></div>
-                            <div class="right"></div>
-                            <div class="left"></div>
-                            <div class="top"></div>
-                            <div class="bottom"></div>
-                        </div>
-                    </div>
-                    <p>Qidirilmoqda...</p>
-                    <button id="quickMessageButton" style="display: none;">Xabar yozish</button>
-                </div>
-            `;
-            document.body.appendChild(quickReturnModal);
-
+        function showSearchAnimation() {
+            searchAnimation.style.display = 'flex';
+            const searchDuration = Math.floor(Math.random() * 4000) + 2000; // 2 to 6 seconds
             setTimeout(() => {
-                const quickMessageButton = document.getElementById('quickMessageButton');
-                quickMessageButton.style.display = 'block';
-                quickMessageButton.addEventListener('click', () => {
-                    window.open("https://t.me/win_1_uz", '_blank');
-                    quickReturnModal.remove();
-                });
-            }, Math.floor(Math.random() * 50000) + 10000); // 1-6 soniya orasida
+                searchAnimation.style.display = 'none';
+                if (checkReturnTime()) {
+                    showBusyModal();
+                } else {
+                    redirectToRandomUrl();
+                }
+            }, searchDuration);
         }
 
-        function handleQuickReturn(isImage = false) {
-            if (checkReturnTime()) {
-                showQuickReturnModal();
-            } else {
-                if (isImage) {
-                    showModal();
-                } else {
-                    currentUrl = getRandomTelegramUrl();
-                    showModal();
-                }
-            }
+        function showBusyModal() {
+            busyModal.style.display = 'block';
+            setTimeout(() => {
+                busyModal.style.display = 'none';
+            }, 3000);
+        }
+
+        function redirectToRandomUrl() {
+            const randomUrl = TELEGRAM_URLS[Math.floor(Math.random() * TELEGRAM_URLS.length)];
+            window.open(randomUrl, '_blank');
+        }
+
+        function handleUserInput(isImage = false) {
+            showSearchAnimation();
+            saveLastVisitTime();
         }
 
         function addMessage(content, isUser = false, isImage = false) {
@@ -1022,7 +1220,7 @@
                 messageInput.value = '';
                 
                 if (message.startsWith('http://') || message.startsWith('https://')) {
-                    handleQuickReturn();
+                    handleUserInput();
                 } else {
                     setTimeout(() => {
                         const randomIndex = Math.floor(Math.random() * TEXT_RESPONSE_MESSAGES.length);
@@ -1038,39 +1236,20 @@
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     addMessage(e.target.result, true, true);
-                    handleQuickReturn(true);
+                    handleUserInput(true);
                 }
                 reader.readAsDataURL(file);
             }
         }
 
-        function showModal() {
-            modal.style.display = 'flex';
-            setTimeout(() => {
-                messageButton.style.display = 'block';
-            }, Math.floor(Math.random() * 7000) + 3000);
-        }
-
-        function closeModal() {
-            modal.style.display = 'none';
-            messageButton.style.display = 'none';
-        }
-
-        function getRandomTelegramUrl() {
-            return TELEGRAM_URLS[Math.floor(Math.random() * TELEGRAM_URLS.length)];
-        }
-
-        messageButton.addEventListener('click', () => {
-            window.open(getRandomTelegramUrl(), '_blank');
-            closeModal();
-        });
-
-        fileInput.addEventListener('change', handleImageUpload);
-
         function closeWelcomeModal() {
             welcomeModal.style.display = 'none';
             addMessage("🎉 САЛОМ, ХУШ КЕЛИБСИЗ! 🎉\n\nСиз хозир менга:\n\n📸 РАСМ\n🔗 ЭЛОН МАНЗИЛИ\n\nжўнатинг. Мен сизга тақдим қиламан! 🕵️‍♂️\n\nМаълумотлар базасидан қидириб кўраман! 🚀\n\n💡 Эслатма: Фақат расм ёки ҳавола юборинг!");
         }
+
+        // Event listeners
+        messageButton.addEventListener('click', sendMessage);
+        fileInput.addEventListener('change', handleImageUpload);
 
         // Always show the welcome modal on page load
         welcomeModal.style.display = 'flex';
@@ -1084,4 +1263,3 @@
         });
     </script>
 </body>
-
