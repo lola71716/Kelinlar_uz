@@ -1,972 +1,454 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Linkbot AI</title>
+    <title>PIN Code Entry</title>
     <style>
-        /* Reset and base styles */
+        /* Base styles */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
         }
 
         body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #FF1B6B 0%, #45CAFF 100%);
+            background-color: #000;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+        }
+
+        /* Search animation styles */
+        .search-animation {
+            width: 100%;
             height: 100vh;
             display: flex;
             flex-direction: column;
-        }
-
-        /* Header styles */
-        .header {
-            background-color: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            padding: 1rem;
-            display: flex;
             align-items: center;
-        }
-
-        .avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: #fff;
-            margin-right: 1rem;
-        }
-
-        .header-text h1 {
-            color: #fff;
-            font-size: 1.2rem;
-        }
-
-        .header-text p {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 0.8rem;
-        }
-
-        /* Chat container styles */
-        .chat-container {
-            flex: 1;
-            overflow-y: auto;
-            padding: 1rem;
-        }
-
-        .message {
-            max-width: 80%;
-            margin-bottom: 1rem;
-            padding: 0.5rem 1rem;
-            border-radius: 1rem;
-            color: #fff;
-        }
-
-        .user-message {
-            background-color: #fff;
-            color: #FF1B6B;
-            align-self: flex-end;
-            margin-left: auto;
-        }
-
-        .bot-message {
-            background-color: #03030395;
-        }
-
-        /* Input area styles */
-        .input-area {
-            background-color: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            padding: 1rem;
-            display: flex;
-            align-items: center;
-        }
-
-        .input-area input {
-            flex: 1;
-            padding: 0.5rem;
-            border: none;
-            border-radius: 1rem;
-            margin-right: 0.5rem;
-            background-color: rgba(255, 255, 255, 0.2);
-            color: #fff;
-        }
-
-        .input-area button {
-            background-color: #fff;
-            color: #FF1B6B;
-            border: none;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            cursor: pointer;
-        }
-
-        /* Modal styles */
-        .modal {
+            justify-content: center;
+            padding: 0 1rem;
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            backdrop-filter: blur(5px);
+            z-index: 100;
+            background-color: #000;
         }
 
-        .modal-content {
-            background-color: #fff;
-            padding: 2rem;
-            border-radius: 1rem;
+        .search-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 2.5rem;
             text-align: center;
         }
 
-        .modal-content button {
-            margin-top: 1rem;
-            padding: 0.5rem 1rem;
-            background-color: #FF1B6B;
-            color: #fff;
-            border: none;
-            border-radius: 0.5rem;
-            cursor: pointer;
+        @media (min-width: 768px) {
+            .search-title {
+                font-size: 1.75rem;
+            }
         }
 
-        /* 3D Cube Animation */
-        .cube-container {
-            width: 100px;
-            height: 100px;
-            perspective: 1000px;
-            margin: 0 auto 1rem;
-        }
-
-        .cube {
+        .progress-bar {
             width: 100%;
-            height: 100%;
+            max-width: 28rem;
             position: relative;
-            transform-style: preserve-3d;
-            animation: rotate 5s infinite linear;
         }
 
-        .cube div {
-            position: absolute;
-            width: 100px;
-            height: 100px;
-            background: rgba(255, 27, 107, 0.8);
-            border: 2px solid #fff;
+        .progress-bg {
+            height: 0.5rem;
+            background-color: #374151;
+            border-radius: 9999px;
+            overflow: hidden;
         }
 
-        .front  { transform: rotateY(0deg) translateZ(50px); }
-        .back   { transform: rotateY(180deg) translateZ(50px); }
-        .right  { transform: rotateY(90deg) translateZ(50px); }
-        .left   { transform: rotateY(-90deg) translateZ(50px); }
-        .top    { transform: rotateX(90deg) translateZ(50px); }
-        .bottom { transform: rotateX(-90deg) translateZ(50px); }
-
-        @keyframes rotate {
-            0% { transform: rotateX(0deg) rotateY(0deg); }
-            100% { transform: rotateX(360deg) rotateY(360deg); }
-        }
-
-        /* Welcome Modal */
-        .welcome-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
+        .progress-fill {
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.6);
+            background: linear-gradient(to right, #8b5cf6, #3b82f6);
+            width: 0%;
+            transition: width 0.1s ease;
+        }
+
+        .spinner-container {
+            margin-top: 2rem;
             display: flex;
             justify-content: center;
-            align-items: center;
-            z-index: 1000;
         }
 
-        .welcome-content {
-            background-color: #fff;
-            padding: 2rem;
-            border-radius: 1rem;
-            max-width: 90%;
-            width: 400px;
-        }
-
-        .welcome-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-
-        .welcome-avatar {
-            width: 50px;
-            height: 50px;
+        .spinner {
+            width: 4rem;
+            height: 4rem;
+            border: 0.25rem solid;
+            border-color: #3b82f6 #8b5cf6 #ec4899 #6366f1;
             border-radius: 50%;
-            background-color: #FF1B6B;
-            margin-right: 1rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #fff;
-            font-size: 1.5rem;
+            animation: spin 2s linear infinite;
         }
 
-        .welcome-title {
-            font-size: 1.5rem;
-            background: linear-gradient(to right, #FF1B6B, #45CAFF);
+        .dots-container {
+            margin-top: 2rem;
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            animation: fade 1.5s ease-in-out infinite;
+        }
+
+        .dot {
+            width: 0.75rem;
+            height: 0.75rem;
+            background-color: #3b82f6;
+            border-radius: 50%;
+        }
+
+        .dot:nth-child(1) {
+            animation: bounce 1s ease-in-out infinite;
+        }
+
+        .dot:nth-child(2) {
+            animation: bounce 1s ease-in-out 0.2s infinite;
+        }
+
+        .dot:nth-child(3) {
+            animation: bounce 1s ease-in-out 0.4s infinite;
+        }
+
+        /* PIN input styles */
+        .pin-container {
+            width: 100%;
+            max-width: 28rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0 1rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .pin-container.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .pin-title {
+            font-size: 1.75rem;
+            font-weight: bold;
+            margin-bottom: 2rem;
+            text-align: center;
+            background: linear-gradient(to right, #a78bfa, #ec4899);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .welcome-subtitle {
-            color: #666;
-            font-size: 0.9rem;
+        @media (min-width: 768px) {
+            .pin-title {
+                font-size: 2rem;
+            }
         }
 
-        .welcome-instructions {
-            margin-top: 1rem;
-        }
-
-        .instruction-item {
+        .pin-input-group {
             display: flex;
-            align-items: flex-start;
-            margin-bottom: 1rem;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
         }
 
-        .instruction-icon {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background-color: rgba(255, 27, 107, 0.1);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-right: 1rem;
-            flex-shrink: 0;
+        @media (min-width: 768px) {
+            .pin-input-group {
+                gap: 1rem;
+            }
         }
 
-        .instruction-text {
-            flex: 1;
+        .pin-input-wrapper {
+            position: relative;
+            transform: translateY(20px);
+            opacity: 0;
+            animation: slideUp 0.5s forwards;
         }
 
-        .instruction-text strong {
-            display: block;
-            margin-bottom: 0.25rem;
+        .pin-input-wrapper:nth-child(1) {
+            animation-delay: 0.5s;
         }
 
-        .welcome-note {
-            background-color: rgba(255, 27, 107, 0.1);
-            padding: 1rem;
+        .pin-input-wrapper:nth-child(2) {
+            animation-delay: 0.6s;
+        }
+
+        .pin-input-wrapper:nth-child(3) {
+            animation-delay: 0.7s;
+        }
+
+        .pin-input-wrapper:nth-child(4) {
+            animation-delay: 0.8s;
+        }
+
+        .pin-input {
+            width: 3.5rem;
+            height: 4rem;
+            font-size: 1.5rem;
+            text-align: center;
+            background-color: #111827;
+            border: 2px solid #8b5cf6;
             border-radius: 0.5rem;
-            margin-top: 1rem;
-            font-size: 0.9rem;
+            color: white;
+            outline: none;
         }
 
-        .welcome-buttons {
-            margin-top: 1rem;
+        .pin-input:focus {
+            box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.5);
         }
 
-        .welcome-button {
-            display: block;
-            width: 100%;
-            padding: 0.75rem;
+        @media (min-width: 768px) {
+            .pin-input {
+                width: 4rem;
+                height: 5rem;
+                font-size: 1.75rem;
+            }
+        }
+
+        .pin-indicator {
+            position: absolute;
+            top: -0.25rem;
+            right: -0.25rem;
+            width: 1rem;
+            height: 1rem;
+            background-color: #10b981;
+            border-radius: 50%;
+            transform: scale(0);
+            transition: transform 0.2s ease;
+        }
+
+        .pin-indicator.active {
+            transform: scale(1);
+        }
+
+        .error-message {
+            color: #ef4444;
+            margin-bottom: 1rem;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .error-message.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .submit-button {
+            padding: 0.75rem 2rem;
+            background: linear-gradient(to right, #8b5cf6, #3b82f6);
             border: none;
             border-radius: 0.5rem;
-            background: linear-gradient(135deg, #FF1B6B 0%, #45CAFF 100%);
-            color: #fff;
-            font-size: 1rem;
+            color: white;
+            font-weight: bold;
             cursor: pointer;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideUp 0.5s forwards;
+            animation-delay: 0.7s;
+        }
+
+        .submit-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 20px 25px -5px rgba(139, 92, 246, 0.1), 0 10px 10px -5px rgba(139, 92, 246, 0.04);
+        }
+
+        .submit-button:active {
+            transform: scale(0.95);
+        }
+
+        /* Info section styles */
+        .info-section {
+            max-width: 28rem;
+            margin: 2rem auto;
+            text-align: center;
+            padding: 0 1rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideUp 0.5s forwards;
+            animation-delay: 0.9s;
+        }
+
+        .info-text {
+            color: #94a3b8;
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .buy-button {
+            display: inline-block;
+            padding: 0.75rem 2rem;
+            background: linear-gradient(to right, #ec4899, #8b5cf6);
+            border: none;
+            border-radius: 0.5rem;
+            color: white;
+            font-weight: bold;
+            text-decoration: none;
+            cursor: pointer;
+            box-shadow: 0 10px 15px -3px rgba(236, 72, 153, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .buy-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 25px -5px rgba(236, 72, 153, 0.4);
+        }
+
+        .buy-button:active {
+            transform: translateY(0);
+        }
+
+        /* Success message styles */
+        .success-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .success-container.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .success-icon {
+            width: 4rem;
+            height: 4rem;
+            margin-bottom: 1rem;
+            color: #10b981;
+            animation: pulse 1.5s infinite alternate;
+        }
+
+        .success-message {
+            font-size: 1.25rem;
+            color: #10b981;
+            font-weight: bold;
             margin-bottom: 0.5rem;
         }
 
-        .telegram-button {
-            background: #0088cc;
+        .redirect-message {
+            color: #3b82f6;
         }
 
-        /* New styles for search animation */
-        .search-animation {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
+        /* Animations */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
-        .search-content {
-            background-color: #fff;
-            padding: 2rem;
-            border-radius: 1rem;
-            text-align: center;
+        @keyframes fade {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
         }
 
-        /* New styles for busy modal */
-        .busy-modal {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: #fff;
-            padding: 1rem;
-            border-radius: 0.5rem;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            z-index: 2000;
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes slideUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="avatar"></div>
-        <div class="header-text">
-            <h1>Linkbot AI</h1>
-            <p>Online</p>
+    <!-- Search Animation -->
+    <div id="searchAnimation" class="search-animation">
+        <h1 class="search-title">Номзодни Сиз Блан Боглашга Харакат Килинмокда.... кутинг...</h1>
+        
+        <div class="progress-bar">
+            <div class="progress-bg">
+                <div id="progressFill" class="progress-fill"></div>
+            </div>
+        </div>
+        
+        <div class="spinner-container">
+            <div class="spinner"></div>
+        </div>
+        
+        <div class="dots-container">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
         </div>
     </div>
 
-    <div class="chat-container" id="chatContainer"></div>
-
-    <div class="input-area">
-        <input type="file" id="fileInput" style="display: none;" accept="image/*">
-        <button onclick="document.getElementById('fileInput').click()">📷</button>
-        <input type="text" id="messageInput" placeholder="Xabaringizni yozing...">
-        <button onclick="sendMessage()">📤</button>
-    </div>
-
-    <div id="modal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <div class="cube-container">
-                <div class="cube">
-                    <div class="front"></div>
-                    <div class="back"></div>
-                    <div class="right"></div>
-                    <div class="left"></div>
-                    <div class="top"></div>
-                    <div class="bottom"></div>
-                </div>
+    <!-- PIN Input -->
+    <div id="pinContainer" class="pin-container">
+        <h1 class="pin-title">PIN-кодни киритинг</h1>
+        
+        <div class="pin-input-group">
+            <div class="pin-input-wrapper">
+                <input type="text" inputmode="numeric" maxlength="1" class="pin-input" data-index="0">
+                <div class="pin-indicator"></div>
             </div>
-            <p>Qidirilmoqda...</p>
-            <button id="messageButton" style="display: none;">Xabar Yozish</button>
-        </div>
-    </div>
-
-    <div id="welcomeModal" class="welcome-modal">
-        <div class="welcome-content">
-            <div class="welcome-header">
-                <div class="welcome-avatar">🤖</div>
-                <div>
-                    <h2 class="welcome-title">AI BOT Qo'llanmasi</h2>
-                    <p class="welcome-subtitle">Botdan foydalanish yo'riqnomasi</p>
-                </div>
+            <div class="pin-input-wrapper">
+                <input type="text" inputmode="numeric" maxlength="1" class="pin-input" data-index="1">
+                <div class="pin-indicator"></div>
             </div>
-            <div class="welcome-instructions">
-                <div class="instruction-item">
-                    <div class="instruction-icon">📋</div>
-                    <div class="instruction-text">
-                        <strong>Qizning elonini nusxalang:</strong>
-                        Telegram kanallaridan qiziqtirgan qizning elon havolasini nusxalab oling
-                    </div>
-                </div>
-                <div class="instruction-item">
-                    <div class="instruction-icon">💬</div>
-                    <div class="instruction-text">
-                        <strong>Elonni menga yuboring:</strong>
-                        Nusxalangan havola yoki rasmni chatga tashlang
-                    </div>
-                </div>
-                <div class="instruction-item">
-                    <div class="instruction-icon">🖼️</div>
-                    <div class="instruction-text">
-                        <strong>Rasm ham yuborishingiz mumkin:</strong>
-                        Qizning rasmini yuklash orqali ham izlash mumkin
-                    </div>
-                </div>
-                <div class="instruction-item">
-                    <div class="instruction-icon">➡️</div>
-                    <div class="instruction-text">
-                        <strong>Men sizga yordam beraman:</strong>
-                        Qizning profilini topib, siz bilan bog'lanish uchun havola beraman
-                    </div>
-                </div>
+            <div class="pin-input-wrapper">
+                <input type="text" inputmode="numeric" maxlength="1" class="pin-input" data-index="2">
+                <div class="pin-indicator"></div>
             </div>
-            <div class="welcome-note">
-                <p><strong>Eslatma:</strong></p>
-                <p>Men robotman, faqat elon va rasmlar bilan ishlay olaman. Ortiqcha savollarga javob bera olmayman. Iltimos, faqat elon havolasi yoki rasm yuboring.</p>
-            </div>
-            <div class="welcome-buttons">
-                <button class="welcome-button" onclick="closeWelcomeModal()">Tushundim, boshlaylik!</button>
-                <button class="welcome-button telegram-button" onclick="window.open('https://t.me/Hey_jonim', '_blank')">TELEGRAM KANAL</button>
+            <div class="pin-input-wrapper">
+                <input type="text" inputmode="numeric" maxlength="1" class="pin-input" data-index="3">
+                <div class="pin-indicator"></div>
             </div>
         </div>
-    </div>
+        
+        <div id="errorMessage" class="error-message"></div>
+        
+        <button id="submitButton" class="submit-button">Тасдиқлаш</button>
 
-    <div id="searchAnimation" class="search-animation" style="display: none;">
-        <div class="search-content">
-            <div class="cube-container">
-                <div class="cube">
-                    <div class="front"></div>
-                    <div class="back"></div>
-                    <div class="right"></div>
-                    <div class="left"></div>
-                    <div class="top"></div>
-                    <div class="bottom"></div>
-                </div>
-            </div>
-            <p>Qidirilmoqda...</p>
+        <!-- Info Section -->
+        <div class="info-section">
+            <p class="info-text">
+                Ҳурматли фойдаланувчи! Келин номзод билан боғланиш учун PIN код киритишингиз керак. PIN код орқали сиз 1 йил давомида чекловларсиз барча келин номзодлар билан боғлана оласиз ва ўзингизга муносиб жуфти ҳалолингизни топишингиз мумкин. Биз сизга энг сара номзодларни таклиф этамиз!
+            </p>
+            <a href="https://v0-fork-of-uzbek-ai-chat-phi.vercel.app" class="buy-button">
+                PIN Код Сотиб Олиш
+            </a>
         </div>
-    </div>
-
-    <div id="busyModal" class="busy-modal" style="display: none;">
-        <p>Kechrasiz ❌️ Siz qidirgan Kelin nomzod xozirda band biroz vaxtdan so'ng qayta o'rinib ko'ring</p>
+        
+        <div id="successContainer" class="success-container">
+            <div class="success-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-.997-6l7.07-7.071-1.414-1.414-5.656 5.657-2.829-2.829-1.414 1.414L11.003 16z"/>
+                </svg>
+            </div>
+            <p class="success-message">PIN-код тўғри!</p>
+            <p id="redirectMessage" class="redirect-message"></p>
+        </div>
     </div>
 
     <script>
-        const chatContainer = document.getElementById('chatContainer');
-        const messageInput = document.getElementById('messageInput');
-        const modal = document.getElementById('modal');
-        const messageButton = document.getElementById('messageButton');
-        const fileInput = document.getElementById('fileInput');
-        const welcomeModal = document.getElementById('welcomeModal');
-        const searchAnimation = document.getElementById('searchAnimation');
-        const busyModal = document.getElementById('busyModal');
+        // Valid PINs
+        const validPins = [
+            "4488", "9890", "5534", "2674", "1689", "1564", "3674", "6426", 
+            "7432", "6468", "6326", "7542", "6559", "6442", "5432", "5642", 
+            "7764", "6542", "5432", "7733", "7546", "2253", "5634", "7635", 
+            "1176", "1921", "1739"
+        ];
 
-        const TELEGRAM_URLS = [
-            "https://t.me/Sunshine_0224",
-            "https://t.me/Inshaolloh8888888",
-            "https://t.me/Fazo9501",
-            "https://t.me/Dilosh2992",
-            "https://t.me/ABBMNB111",
-            "https://t.me/ismoyil95y",
-            "https://t.me/Qaysar7778",
-            "https://t.me/MNBasall",
-            "https://t.me/no_na_me1885",
-"https://t.me/zara_dior80",
-"https://t.me/kz_kz999",
-"https://t.me/SSSSFFFFGGGGGJ",
-"https://t.me/asiya7777",
-"https://t.me/yasin00193",
-"https://t.me/Rainbow95959",
-"https://t.me/LilithEva9",
-"https://t.me/Leylam1999",
-"https://t.me/Shaxzoda7727",
-"https://t.me/Ruxwon03",
-"https://t.me/WW88SSSS88",
-"https://t.me/Baxtim_5447",
-"https://t.me/jenuary1",
-"https://t.me/Mybbbbb0988",
-"https://t.me/tavhid_ll",
-"https://t.me/semuliotion",
-"https://t.me/Muhammadali_0000",
-"https://t.me/Jannat_shaydosim",
-"https://t.me/no_na_me1885",
-"https://t.me/Azizaaammm",
-"https://t.me/Bonu0999",
-"https://t.me/Tashxislaa",
-"https://t.me/Umidimsundirma4488",
-"https://t.me/Go_fitnesss",
-"https://t.me/Ledydi90",
-"https://t.me/gulnozaxon5",
-"https://t.me/Alhamdulillah_3204",
-"https://t.me/Hadicha82",
-"https://t.me/Zara_0311",
-"https://t.me/laylo013",
-"https://t.me/thegrayswan",
-"https://t.me/Bibi_09900",
-"https://t.me/Sevara1525",
-"https://t.me/sadiii_11",
-"https://t.me/Taqdir_hazili_0",
-"https://t.me/Htagfks",
-"https://t.me/Lregj",
-"https://t.me/Navruza_1999",
-"https://t.me/Seraphine1616",
-"https://t.me/deo_0102",
-"https://t.me/muhsin_muhsinn",
-"https://t.me/deryacha",
-"https://t.me/GUZALLA7777",
-"https://t.me/dilozorrrrrrr",
-"https://t.me/Maryam300110",
-"https://t.me/olloh_buyuk57",
-"https://t.me/Donbogimmm",
-"https://t.me/thesun011",
-"https://t.me/pnosma19",
-"https://t.me/kuz0200",
-"https://t.me/amorfati050222",
-"https://t.me/zooloshka",
-"https://t.me/oglimga_otakerak",
-"https://t.me/Navruza_1999",
-"https://t.me/soxta1247",
-"https://t.me/Fhjlohh",
-"https://t.me/Yuivfn",
-"https://t.me/Deee2224",
-"https://t.me/soxta1247",
-"https://t.me/shaxlor",
-"https://t.me/z5677777",
-"https://t.me/MKAI2010",
-"https://t.me/hanafiy_aa",
-"https://t.me/Baxttilayman",
-"https://t.me/tehlikali",
-"https://t.me/Mi_mi211",
-"https://t.me/Muhammadalieva_001",
-"https://t.me/BEAR5050",
-"https://t.me/Tyulpancha",
-"https://t.me/Bizbaxtlib",
-"https://t.me/Sabrlig1m_1",
-"https://t.me/Beautydollyy",
-"https://t.me/Onajonimquyoshim",
-"https://t.me/zara_dior80",
-"https://t.me/kz_kz999",
-"https://t.me/asiya7777",
-"https://t.me/Rainbow95959",
-"https://t.me/LilithEva9",
-"https://t.me/Leylam1999",
-"https://t.me/Sevara1525",
-"https://t.me/Maftu89",
-"https://t.me/hghgy6576yt",
-"https://t.me/Baxtli836",
-"https://t.me/assi1984",
-"https://t.me/Jojo_96",
-"https://t.me/maxliyo0606",
-"https://t.me/Sferaaz",
-"https://t.me/BAXORAXON555",
-"https://t.me/i9irij",
-"https://t.me/RobbimAllohdurr",
-"https://t.me/Pro_09_08",
-"https://t.me/Life_is_short0407",
-"https://t.me/island77f",
-"https://t.me/Hayot_sinov90",
-"https://t.me/MITTIVOYIM999",
-"https://t.me/nilu95hjjj",
-"https://t.me/bornpink_girl",
-"https://t.me/Allohbuyukdur78",
-"https://t.me/aaaaa_1228",
-"https://t.me/dmin_ruu",
-"https://t.me/Gulqiz0",
-"https://t.me/A1shem_23",
-"https://t.me/MITTIVOYIM999",
-"https://t.me/dilim4444",
-"https://t.me/xayotshunaqa1994",
-"https://t.me/island77f",
-"https://t.me/Jojo_96",
-"https://t.me/Seeevdaaaaaa",
-"https://t.me/Mmmmhhukkk",
-"https://t.me/dilim4444",
-"https://t.me/nilu95hjjj",
-"https://t.me/agfagfagf",
-"https://t.me/Fargona1987m",
-"https://t.me/nurnoma29",
-"https://t.me/hghg6yt56yt54r",
-"https://t.me/hghg6y743e",
-"https://t.me/Allohu_Akbar_77",
-"https://t.me/hghvcy654rd",
-"https://t.me/Zexra9404",
-"https://t.me/maybetrueor",
-"https://t.me/hghgy676ytby76",
-"https://t.me/Bahtliimanda",
-"https://t.me/ug_0304",
-"https://t.me/hghgh676yt65",
-"https://t.me/hghg65yt56yt",
-"https://t.me/Asmo088",
-"https://t.me/ARSLONOVA1212",
-"https://t.me/alora_0931",
-"https://t.me/Chiroyli_qizcha_1",
-"https://t.me/Ayub122134",
-"https://t.me/Omadbaxtl",
-"https://t.me/Zebo_34",
-"https://t.me/Shohista8886",
-"https://t.me/nilu95hjjj",
-"https://t.me/hjhgg67uyg",
-"https://t.me/Djajdjk",
-"https://t.me/maxliyo0606",
-"https://t.me/hghfg656yt65",
-"https://t.me/Allohimgaa_shukrlar",
-"https://t.me/hgdfff5554rr",
-"https://t.me/Rayyona57",
-"https://t.me/Orzu0690",
-"https://t.me/jayrona1718",
-"https://t.me/a123921",
-"https://t.me/k_m_8901",
-"https://t.me/xayotshunaqa1994",
-"https://t.me/missledi24",
-"https://t.me/Wwwwwwww1209",
-"https://t.me/Shodlik_3011",
-"https://t.me/Leylam1999",
-"https://t.me/Ruqiyahon0011",
-"https://t.me/Beautydollyy",
-"https://t.me/TRRT01",
-"https://t.me/laylo013",
-"https://t.me/Dur_do_naaa",
-"https://t.me/Dilkhon06",
-"https://t.me/nigow_14",
-"https://t.me/qwerty29090",
-"https://t.me/Tanho_gul_97",
-"https://t.me/Sakinaxon_38",
-"https://t.me/Taqdir_hazili_0",
-"https://t.me/Zarnigor1m",
-"https://t.me/bluebird026",
-"https://t.me/Fza_08",
-"https://t.me/AroshEva",
-"https://t.me/Ladymiss55",
-"https://t.me/Baxtiyorovna_001",
-"https://t.me/Hali_19_91",
-"https://t.me/a182518",
-"https://t.me/Alvodoooo",
-"https://t.me/miss_9803",
-"https://t.me/liriwa_01",
-"https://t.me/alfraganiyus",
-"https://t.me/Dtfgujb",
-"https://t.me/rfugfx",
-"https://t.me/luna_a_a",
-"https://t.me/SHAXZODA081",
-"https://t.me/Ahmedova200",
-"https://t.me/hgdfdtr0404",
-"https://t.me/Sirimmeni",
-"https://t.me/Baxtimsan_jonimm",
-"https://t.me/Gulnor_0088",
-"https://t.me/LoLa_mmmm",
-"https://t.me/hghgf67uygvx",
-"https://t.me/isakova2703",
-"https://t.me/Umidam_98",
-"https://t.me/Svimei",
-"https://t.me/Fargona1987A",
-"https://t.me/Sevgi1996",
-"https://t.me/hggfdfff5ttt",
-"https://t.me/Chassx",
-"https://t.me/kapalagimzar",
-"https://t.me/sabr_1995",
-"https://t.me/MADINAXON8",
-"https://t.me/Kumuw89",
-"https://t.me/farishtam_087",
-"https://t.me/hghg6yt56yt54r",
-"https://t.me/Vorgulim",
-"https://t.me/jayrona1718",
-"https://t.me/oy2309",
-"https://t.me/Baxt219",
-"https://t.me/NGD_1205",
-"https://t.me/Q_marun04",
-"https://t.me/fate1_2",
-"https://t.me/DN970",
-"https://t.me/drnazlish",
-"https://t.me/Shaxzoda3504",
-"https://t.me/notanishka",
-"https://t.me/Ummum22",
-"https://t.me/Dunyo_gozali127",
-"https://t.me/Muhammadiyeva2001",
-"https://t.me/Qiziqma_0404",
-"https://t.me/S_1998_06_07",
-"https://t.me/Milashka_4090",
-"https://t.me/Qaysar7778",
-"https://t.me/Milashkaa2000",
-"https://t.me/Zebogulim2021",
-"https://t.me/Olamxolam",
-"https://t.me/muslimnigora72",
-"https://t.me/ozimm89",
-"https://t.me/Qirolicha_adminka",
-"https://t.me/zuza1011",
-"https://t.me/Baxt219",
-"https://t.me/Mzadem_21",
-"https://t.me/hghxa",
-"https://t.me/Quqon_N11",
-"https://t.me/reyhenm_77",
-"https://t.me/Hiliii2299",
-"https://t.me/Dtfgujb",
-"https://t.me/rfugfx",
-"https://t.me/luna_a_a",
-"https://t.me/SHAXZODA081",
-"https://t.me/Ahmedova200",
-"https://t.me/hgdfdtr0404",
-"https://t.me/Sirimmeni",
-"https://t.me/Baxtimsan_jonimm",
-"https://t.me/Gulnor_0088",
-"https://t.me/LoLa_mmmm",
-"https://t.me/hghgf67uygvx",
-"https://t.me/isakova2703",
-"https://t.me/Umidam_98",
-"https://t.me/Svimei",
-"https://t.me/Fargona1987A",
-"https://t.me/Sevgi1996",
-"https://t.me/hggfdfff5ttt",
-"https://t.me/Chassx",
-"https://t.me/kapalagimzar",
-"https://t.me/sabr_1995",
-"https://t.me/MADINAXON8",
-"https://t.me/Kumuw89",
-"https://t.me/farishtam_087",
-"https://t.me/hghg6yt56yt54r",
-"https://t.me/Vorgulim",
-"https://t.me/jayrona1718",
-"https://t.me/oy2309",
-"https://t.me/Baxt219",
-"https://t.me/NGD_1205",
-"https://t.me/Q_marun04",
-"https://t.me/fate1_2",
-"https://t.me/DN970",
-"https://t.me/drnazlish",
-"https://t.me/Shaxzoda3504",
-"https://t.me/notanishka",
-"https://t.me/Ummum22",
-"https://t.me/Dunyo_gozali127",
-"https://t.me/Muhammadiyeva2001",
-"https://t.me/Qiziqma_0404",
-"https://t.me/S_1998_06_07",
-"https://t.me/Milashka_4090",
-"https://t.me/Qaysar7778",
-"https://t.me/Milashkaa2000",
-"https://t.me/Zebogulim2021",
-"https://t.me/Olamxolam",
-"https://t.me/muslimnigora72",
-"https://t.me/ozimm89",
-"https://t.me/Qirolicha_adminka",
-"https://t.me/zuza1011",
-"https://t.me/Baxt219",
-"https://t.me/Mzadem_21",
-"https://t.me/hghxa",
-"https://t.me/Quqon_N11",
-"https://t.me/reyhenm_77",
-"https://t.me/Hiliii2299",
-"https://t.me/Qizalogii",
-"https://t.me/maaryam3001",
-"https://t.me/AA8880t",
-"https://t.me/laylo013",
-"https://t.me/hgh6gy676yt65",
-"https://t.me/Xadicha10001",
-"https://t.me/Hiliii2299",
-"https://t.me/adush80",
-"https://t.me/zzshohruh",
-"https://t.me/Asillaaaaaaaa",
-"https://t.me/Ginekolog_08_04",
-"https://t.me/A939313",
-"https://t.me/Charos199406",
-"https://t.me/amorfatiiiiiiiiiiiii",
-"https://t.me/Ollohmenisevadi",
-"https://t.me/Ollohmenisevadi",
-"https://t.me/farishtam_087",
-"https://t.me/farishtam_087",
-"https://t.me/MUXTARAMA_88",
-"https://t.me/farishtam_087",
-"https://t.me/MUXTARAMA_88",
-"https://t.me/MUXTARAMA_88",
-"https://t.me/Umida_Buj",
-"https://t.me/Kumuw89",
-"https://t.me/Alhamdullillah877",
-"https://t.me/IMAMOVA85",
-"https://t.me/gulia082",
-"https://t.me/mm_b_85",
-"https://t.me/Nabashka",
-"https://t.me/RM559955",
-"https://t.me/Alhamdullillah877",
-"https://t.me/Mahumdjoniva",
-"https://t.me/Mexirli9994",
-"https://t.me/MUXTARAMA_88",
-"https://t.me/guli8605",
-"https://t.me/D_01il",
-"https://t.me/Sdakanb",
-"https://t.me/Malakcha_farishtam",
-"https://t.me/guli_08_29",
-"https://t.me/hgihg658u7y6",
-"https://t.me/amor_fati3004a",
-"https://t.me/BAHTIIMS",
-"https://t.me/Yangi2025y",
-"https://t.me/maaryam3001",
-"https://t.me/ayuuuyuy",
-"https://t.me/Umidasultonova93",
-"https://t.me/Mildavomiy",
-"https://t.me/laylo013",
-"https://t.me/FA34AX",
-"https://t.me/Turajanova80",
-"https://t.me/Oilaqadrli",
-"https://t.me/Yoo_Rab7",
-"https://t.me/Alloohm",
-"https://t.me/Hsgsihv",
-"https://t.me/Pro_09_08",
-"https://t.me/thesun011",
-"https://t.me/Z60040",
-"https://t.me/Aisha119099",
-"https://t.me/parizoda_0001",
-"https://t.me/Bismillax51",
-"https://t.me/Muhammadalieva_001",
-"https://t.me/Sirimmeni",
-"https://t.me/AllahuMMaSolli",
-"https://t.me/Dilnoz_4848",
-"https://t.me/Maryam300110",
-"https://t.me/hasratimm09",
-"https://t.me/maksudova1991",
-"https://t.me/aysha8880",
-"https://t.me/ALLOHIMDANBOSHQAILOHYUQ",
-"https://t.me/shokirovna_707",
-"https://t.me/HHamida_al",
-"https://t.me/sabinafey",
-"https://t.me/Beautydollyy",
-"https://t.me/Sabrligim0009",
-"https://t.me/Kabatullohn",
-"https://t.me/Durjan99",
-"https://t.me/Amerikanka_Ayko",
-"https://t.me/Kilaram",
-"https://t.me/Qaysar7778",
-"https://t.me/Mingshukralhamdulilloh",
-"https://t.me/Sabrligim9716",
-"https://t.me/ismailovam1006",
-"https://t.me/Allox1985",
-"https://t.me/Inshaolloh85",
-"https://t.me/Allohning_uyi_mominni_qalbi",
-"https://t.me/hghgf65hg",
-"https://t.me/Feruza_205",
-"https://t.me/farishtamsabr",
-"https://t.me/farm0783",
-"https://t.me/qizologim999",
-"https://t.me/bonu220788",
-"https://t.me/abcd01_1",
-"https://t.me/abcd01_1",
-"https://t.me/hulkar6665",
-"https://t.me/szszsz_11",
-"https://t.me/Raxmat_hayott",
-"https://t.me/alhamdulillah_robbil_alam",
-"https://t.me/kamilaa_a7",
-"https://t.me/deo_0102",
-"https://t.me/Hasbunalloh1907",
-"https://t.me/Azizaaammm",
-"https://t.me/svetokmira8877",
-"https://t.me/SSHS1985",
-"https://t.me/madam2904",
-"https://t.me/Gjjjjjjjkd",
-"https://t.me/hgftfdfff",
-"https://t.me/Ofiyat7777",
-"https://t.me/Lolaxon87",
-"https://t.me/avvut",
-"https://t.me/ralff77",
-"https://t.me/Ne_Zvezditee",
-"https://t.me/Rustamovnaaaa9",
-"https://t.me/MX1994_77",
-"https://t.me/sakinatunni",
-"https://t.me/Sabriya_4441",
-"https://t.me/kamilaa_a7",
-"https://t.me/nurnoma29",
-"https://t.me/Insanmutlu0",
-"https://t.me/Zarina0777",
-"https://t.me/Muhibbi_000",
-"https://t.me/Jonim92",
-"https://t.me/Adu_zarr",
-"https://t.me/avvut",
-"https://t.me/Pok_insonlar_poklar_uchundir",
-"https://t.me/safiy_122",
-"https://t.me/Asilxumadan",
-"https://t.me/Love9820l",
-"https://t.me/Noozaaniinn",
-"https://t.me/Maysara0808",
-"https://t.me/Dil6367",
-"https://t.me/gizlisevdam1991",
-"https://t.me/Madina_998",
-"https://t.me/inshaallah_1_1",
-"https://t.me/ShadowMonlight",
-"https://t.me/m8617",
-"https://t.me/habibi_771",
-"https://t.me/maya_polavina",
-"https://t.me/asrorovna_o1",
-"https://t.me/Sonya5511",
-"https://t.me/abdulaz1zovaa7",
-"https://t.me/Quvonchim66",
-"https://t.me/D_inkal",
-"https://t.me/Love9820l",
-"https://t.me/kamilaa_a7",
-"https://t.me/Ixlas_1",
-"https://t.me/ALLOHIMDANBOSHQAILOHYUQ",
-"https://t.me/shokirovna_707",
-"https://t.me/HHamida_al",
-"https://t.me/sabinafey",
-"https://t.me/Beautydollyy",
-"https://t.me/Sabrligim0009",
-"https://t.me/Durjan99",
-"https://t.me/Amerikanka_Ayko",
-"https://t.me/Kilaram",
-"https://t.me/Qaysar7778",
-"https://t.me/Mingshukralhamdulilloh",
-"https://t.me/Sabrligim9716",
-"https://t.me/ismailovam1006",
-"https://t.me/Allox1985",
-"https://t.me/Beautydollyy",
-"https://t.me/Hazzzzooooon",
-"https://t.me/Inshaolloh85",
-"https://t.me/Allohning_uyi_mominni_qalbi",
-"https://t.me/As_mo0909",
-"https://t.me/hghgf65hg",
-"https://t.me/Feruza_205",
-"https://t.me/farishtamsabr",
-"https://t.me/farm0783",
-"https://t.me/qizologim999",
-"https://t.me/zeb_uzar",
-"https://t.me/T199205",
-"https://t.me/Feridexanim",
-"https://t.me/Ze10109",
-"https://t.me/sakinatunni",
-"https://t.me/Glamour_ga",
-"https://t.me/Sevinchislamova2001",
-"https://t.me/cscmst",
-"https://t.me/Ranowa89",
-"https://t.me/YaRasulAllax",
-"https://t.me/Abdullayeva_571",
-"https://t.me/wwkkpp12",
-"https://t.me/Qalbim_1234567",
-"https://t.me/rakhimovna_2352",
-"https://t.me/IN1816",
-"https://t.me/Gulnoza_098",
-"https://t.me/Asalcham_92",
-"https://t.me/Shaxzoda5433",
-"https://t.me/Sabrligim0099",
-"https://t.me/peopleim",
-"https://t.me/allohim_ozinga_shukurrr",
-"https://t.me/black_rose_fn",
-"https://t.me/Yshhhh14",
-"https://t.me/Qaysar7778",
-"https://t.me/Pocime0201",
-"https://t.me/shaxrustamovnaoo1",
-"https://t.me/qalb_ollo",
-"https://t.me/Gguhcxs",
-"https://t.me/axzhjk",
-"https://t.me/mubicaaa",
-"https://t.me/Maxmud1713",
-"https://t.me/Maryam300110",
-"https://t.me/Maftun777777",
-"https://t.me/Bonu19967",
-"https://t.me/Ummu_Umar202",
-"https://t.me/Medic2290",
-"https://t.me/sevinchjmm",
-"https://t.me/jahona_begi",
-"https://t.me/sabirliayol90",
-"https://t.me/Pocime0201",
-"https://t.me/Sabr_1235",
-"https://t.me/M1ng1kecha",
-"https://t.me/PrincessM0810",
-"https://t.me/+79685111500",
-"https://t.me/zooloshka",
-"https://t.me/W_19_00",
-"https://t.me/Yiroqdagiii",
-"https://t.me/sojid_9",
-"https://t.me/Sobirova0125",
-"https://t.me/Ginekolog_08_04",
-"https://t.me/Sdakanb",
-"https://t.me/Oysha19_99",
-"https://t.me/sojid_9",
-"https://t.me/hghg6yt56yt54r",
-"https://t.me/Dtfgujb",
-"https://t.me/Yaralanganqalblar2000",
-"https://t.me/IYMONA0309",
-"https://t.me/IMAMOVA85",
-"https://t.me/abdullajanovna12",
-"https://t.me/jannatimsizmi",
-"https://t.me/Khusnishk_a",
-"https://t.me/nurligimn",
-"https://t.me/Unutmams",
-"https://t.me/Gulasal5657",
-"https://t.me/Asiraaman",
-"https://t.me/BeautifulSoul39",
-"https://t.me/Dffgrtg",
-"https://t.me/Nodira12122",
-"https://t.me/hjhgg67uyg",
-"https://t.me/Maxmud1713",
-"https://t.me/Charos199111",
-"https://t.me/Zulya_0602",
-"https://t.me/DerzkayaShaxa",
-"https://t.me/Maxmud1713",
-"https://t.me/Guliruxso",
+        // Telegram URLs
+        const telegramUrls = [
+            "https://t.me/Guliruxso",
 "https://t.me/mubicaaa",
 "https://t.me/gipsofilyaa",
 "https://t.me/ustozdst",
@@ -1136,130 +618,257 @@
 "https://t.me/Zilol_076",
 "https://t.me/DILYA_56_56",
 "https://t.me/Izora_2004",
-"https://t.me/Lifeisstillahead1"
+"https://t.me/Lifeisstillahead1",
+"https://t.me/Fatima_SSaida",
+"https://t.me/Wifo_uz",
+"https://t.me/Kabatullohn",
+"https://t.me/Sevganim_Allohhh",
+"https://t.me/La_ilaha_iloloh",
+"https://t.me/shahzoda5191",
+"https://t.me/ATT61S",
+"https://t.me/Azizaqizz",
+"https://t.me/ooo_drm",
+"https://t.me/Kabatullohn",
+"https://t.me/IN1816",
+"https://t.me/Zxhio",
+"https://t.me/mlkmshm",
+"https://t.me/mubicaaa",
+"https://t.me/Little_lady21",
+"https://t.me/tttttfffffffshoira",
+"https://t.me/Omad_84",
+"https://t.me/Kabatullohn",
+"https://t.me/FM0890",
+"https://t.me/Zarina744",
+"https://t.me/A_R5676",
+"https://t.me/muniGu",
+"https://t.me/Muslimova1234",
+"https://t.me/shahzodaco",
+"https://t.me/safiyya85",
+"https://t.me/IN1816",
+"https://t.me/SafiyaaaaAahshs",
+"https://t.me/LeylaLayli",
+"https://t.me/Tyue900",
+"https://t.me/LightOffMoon",
+"https://t.me/Qaysar_Qizaloq_111",
+"https://t.me/sakinatunni",
+"https://t.me/nanii88ii",
+"https://t.me/DILYA_56_56",
+"https://t.me/Hhayo1",
+"https://t.me/Fkxnfdofke",
+"https://t.me/Mehribon1234",
+"https://t.me/aslanka7778",
+"https://t.me/asal2904",
+"https://t.me/raffae89",
+"https://t.me/SHoiraopa7",
+"https://t.me/Fza_05",
+"https://t.me/yasminka_o5",
+"https://t.me/barnow_1317",
+"https://t.me/Nodiraaa1144",
+"https://t.me/tasodf_560",
+"https://t.me/Laylo_hon",
+"https://t.me/Fazo111111",
+"https://t.me/hctdf7",
+"https://t.me/mmbbf_a",
+"https://t.me/X_MOXIM",
+"https://t.me/Nelll22",
+"https://t.me/Yunusova1331",
+"https://t.me/Fotima7133",
+"https://t.me/Dil_28_28",
+"https://t.me/Sumi6361",
+"https://t.me/Shirin0110",
+"https://t.me/Erkatoyka_1999",
+"https://t.me/ddd6367",
+"https://t.me/Baxtliman2025",
+"https://t.me/Musfira2000",
+"https://t.me/nazjed",
+"https://t.me/BKAUZ",
+"https://t.me/KMMMM022",
+"https://t.me/Mimii0707",
+"https://t.me/Loooooooooooooveeeeeeeeeeeeeeee",
+"https://t.me/sakinatunni",
+"https://t.me/Ir_4443",
+"https://t.me/Mtttxh",
+"https://t.me/AADJ00",
+"https://t.me/Nur7668",
+"https://t.me/sabina_a26",
+"https://t.me/Qadarim_1111",
+"https://t.me/MAUUAF",
+"https://t.me/sunshinelab",
+"https://t.me/jmkkahs",
+"https://t.me/GMBJT",
+"https://t.me/Lolo0987655",
+"https://t.me/sakinatunni",
+"https://t.me/Betakrorrrrr",
+"https://t.me/Toliba_1111",
+"https://t.me/Gulii_1988",
+"https://t.me/millaa_milaa",
+"https://t.me/Azizovna_234",
+"https://t.me/culture773",
+"https://t.me/megann6",
+"https://t.me/Saida_Saiii",
+"https://t.me/ZSFZAI",
+"https://t.me/l01l29l",
+"https://t.me/Gullililili",
+"https://t.me/Stamina_095",
+"https://t.me/olloh_sabr",
+"https://t.me/FaFatimkaaAaaaaaaa",
+"https://t.me/Shosha177M",
+"https://t.me/Oishaprensess",
+"https://t.me/Shaxzo_8181",
+"https://t.me/Imtxonnn",
+"https://t.me/Bobomurodova01",
+"https://t.me/Dildora8877",
+"https://t.me/Sabrligim070",
+"https://t.me/Beautydollyy",
+"https://t.me/Oyisham_002",
+"https://t.me/sabr_11122",
+"https://t.me/Maryam_7708",
+"https://t.me/Feax_sam",
+"https://t.me/Baxtkeldi",
+"https://t.me/Fatima_SSaida",
+"https://t.me/Wifo_uz",
+"https://t.me/Afsona_1467",
+"https://t.me/Alhamdulillah202323",
+"https://t.me/baxt09bek",
+"https://t.me/faya2305",
+"https://t.me/Maxmud1713",
+"https://t.me/Jannatga_yol_7790",
+"https://t.me/Mina1892",
+"https://t.me/lonely_0220",
+"https://t.me/kuzmunchogim999",
+"https://t.me/Sadoqatli_bul",
+"https://t.me/nurmatov197628",
+"https://t.me/Maftunaa2001y",
+"https://t.me/Sa9fi"
         ];
-        const BUSY_MESSAGES = [
-            "Кичрасиз бу киз хозирда банд экан узур 2 ёки 3 дакикадан сунг ёзмнг манга",
-            "Кичрасиз топа олмадим",
-            "Узур бу киз банд",
-        ];
-        const TEXT_RESPONSE_MESSAGES = [
-            "🤖 Узур, мен сиз ёзган матнга тушунмадим. Менга матн ўқиш имкониятини беришмаган, шу учун ёзган матнингизни кўрмадим. 📝❌",
-            "🙏 Кечирасиз, мен сиз ёзган матнни ўқишга ҳаракат қилдим, аммо тушунмадим. Менга фақат Келинликка номзоднинг расми ёки элондан нусхасини жўнатинг. 👰🏻‍♀️🔍",
-            "🚫 Менга хабар ёзиш чекланган. Сизга ёрдам беришим учун расм ёки номзоднинг манзилидан нусха олиб жўнатинг. 🖼️🔗",
-        ];
 
-        function saveLastVisitTime() {
-            localStorage.setItem('lastVisitTime', Date.now().toString());
-        }
+        // DOM Elements
+        const searchAnimation = document.getElementById('searchAnimation');
+        const progressFill = document.getElementById('progressFill');
+        const pinContainer = document.getElementById('pinContainer');
+        const pinInputs = document.querySelectorAll('.pin-input');
+        const pinIndicators = document.querySelectorAll('.pin-indicator');
+        const errorMessage = document.getElementById('errorMessage');
+        const submitButton = document.getElementById('submitButton');
+        const successContainer = document.getElementById('successContainer');
+        const redirectMessage = document.getElementById('redirectMessage');
 
-        function getLastVisitTime() {
-            return parseInt(localStorage.getItem('lastVisitTime') || '0');
-        }
-
-        function checkReturnTime() {
-            const currentTime = Date.now();
-            const lastVisitTime = getLastVisitTime();
-            const timeDiff = currentTime - lastVisitTime;
-            return timeDiff >= 5000 && timeDiff <= 15000;
-        }
-
-        function showSearchAnimation() {
-            searchAnimation.style.display = 'flex';
-            const searchDuration = Math.floor(Math.random() * 4000) + 2000; // 2 to 6 seconds
-            setTimeout(() => {
-                searchAnimation.style.display = 'none';
-                if (checkReturnTime()) {
-                    showBusyModal();
-                } else {
-                    redirectToRandomUrl();
-                }
-            }, searchDuration);
-        }
-
-        function showBusyModal() {
-            busyModal.style.display = 'block';
-            setTimeout(() => {
-                busyModal.style.display = 'none';
-            }, 3000);
-        }
-
-        function redirectToRandomUrl() {
-            const randomUrl = TELEGRAM_URLS[Math.floor(Math.random() * TELEGRAM_URLS.length)];
-            window.open(randomUrl, '_blank');
-        }
-
-        function handleUserInput(isImage = false) {
-            showSearchAnimation();
-            saveLastVisitTime();
-        }
-
-        function addMessage(content, isUser = false, isImage = false) {
-            const messageElement = document.createElement('div');
-            messageElement.classList.add('message');
-            messageElement.classList.add(isUser ? 'user-message' : 'bot-message');
-
-            if (isImage) {
-                const img = document.createElement('img');
-                img.src = content;
-                img.style.maxWidth = '100%';
-                img.style.borderRadius = '0.5rem';
-                messageElement.appendChild(img);
-            } else {
-                messageElement.textContent = content;
-            }
-
-            chatContainer.appendChild(messageElement);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
-
-        function sendMessage() {
-            const message = messageInput.value.trim();
-            if (message) {
-                addMessage(message, true);
-                messageInput.value = '';
+        // Search Animation
+        function startSearchAnimation() {
+            const duration = Math.floor(Math.random() * 8000) + 2000;
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 1;
+                progressFill.style.width = `${progress}%`;
                 
-                if (message.startsWith('http://') || message.startsWith('https://')) {
-                    handleUserInput();
-                } else {
+                if (progress >= 100) {
+                    clearInterval(interval);
                     setTimeout(() => {
-                        const randomIndex = Math.floor(Math.random() * TEXT_RESPONSE_MESSAGES.length);
-                        addMessage(TEXT_RESPONSE_MESSAGES[randomIndex]);
-                    }, 1000);
+                        searchAnimation.style.opacity = '0';
+                        setTimeout(() => {
+                            searchAnimation.style.display = 'none';
+                            pinContainer.classList.add('visible');
+                            pinInputs[0].focus();
+                        }, 500);
+                    }, 500);
                 }
-            }
+            }, duration / 100);
         }
 
-        function handleImageUpload(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    addMessage(e.target.result, true, true);
-                    handleUserInput(true);
+        // PIN Input Handling
+        function setupPinInputs() {
+            pinInputs.forEach((input, index) => {
+                input.addEventListener('input', (e) => {
+                    const value = e.target.value;
+                    
+                    if (!/^\d*$/.test(value)) {
+                        e.target.value = '';
+                        return;
+                    }
+                    
+                    if (value.length > 1) {
+                        e.target.value = value.slice(-1);
+                    }
+                    
+                    if (e.target.value) {
+                        pinIndicators[index].classList.add('active');
+                    } else {
+                        pinIndicators[index].classList.remove('active');
+                    }
+                    
+                    if (value && index < 3) {
+                        pinInputs[index + 1].focus();
+                    }
+                    
+                    errorMessage.classList.remove('visible');
+                });
+                
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                        pinInputs[index - 1].focus();
+                    }
+                });
+            });
+        }
+
+        // Submit PIN
+        function setupSubmitButton() {
+            submitButton.addEventListener('click', () => {
+                const pin = Array.from(pinInputs).map(input => input.value).join('');
+                
+                if (pin.length !== 4) {
+                    showError('Илтимос, 4 рақамли PIN-кодни киритинг');
+                    return;
                 }
-                reader.readAsDataURL(file);
-            }
+                
+                if (validPins.includes(pin)) {
+                    handleSuccess();
+                } else {
+                    handleError();
+                }
+            });
         }
 
-        function closeWelcomeModal() {
-            welcomeModal.style.display = 'none';
-            addMessage("🎉 САЛОМ, ХУШ КЕЛИБСИЗ! 🎉\n\nСиз хозир менга:\n\n📸 РАСМ\n🔗 ЭЛОН МАНЗИЛИ\n\nжўнатинг. Мен сизга тақдим қиламан! 🕵️‍♂️\n\nМаълумотлар базасидан қидириб кўраман! 🚀\n\n💡 Эслатма: Фақат расм ёки ҳавола юборинг!");
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.classList.add('visible');
         }
 
-        // Event listeners
-        messageButton.addEventListener('click', sendMessage);
-        fileInput.addEventListener('change', handleImageUpload);
+        function handleSuccess() {
+            submitButton.style.display = 'none';
+            successContainer.classList.add('visible');
+            
+            pinInputs.forEach(input => {
+                input.disabled = true;
+            });
+            
+            setTimeout(() => {
+                redirectMessage.textContent = 'Телеграмга йўналтирилмоқда...';
+                
+                const randomUrl = telegramUrls[Math.floor(Math.random() * telegramUrls.length)];
+                
+                setTimeout(() => {
+                    window.location.href = randomUrl;
+                }, 2000);
+            }, 1000);
+        }
 
-        // Always show the welcome modal on page load
-        welcomeModal.style.display = 'flex';
+        function handleError() {
+            showError('Нотўғри PIN-код. Қайта уриниб кўринг');
+            
+            pinInputs.forEach((input, index) => {
+                input.value = '';
+                pinIndicators[index].classList.remove('active');
+            });
+            
+            pinInputs[0].focus();
+        }
 
-        window.addEventListener('load', () => {
-            saveLastVisitTime();
-        });
-
-        window.addEventListener('beforeunload', () => {
-            saveLastVisitTime();
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            startSearchAnimation();
+            setupPinInputs();
+            setupSubmitButton();
         });
     </script>
 </body>
